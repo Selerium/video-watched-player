@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>video-watched-player — vanilla example</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+      video { width: 100%; border-radius: 8px; background: #000; }
+      .row { display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; }
+      button { padding: 0.5rem 1rem; cursor: pointer; }
+      #status { font-variant-numeric: tabular-nums; color: #333; }
+    </style>
+  </head>
+  <body>
+    <h1>video-watched-player</h1>
+    <div id="player"></div>
+    <div class="row">
+      <button id="resume">Resume</button>
+      <button id="toggle-skip">Toggle skip guard</button>
+      <button id="reset">Reset progress</button>
+    </div>
+    <p id="status">loading…</p>
+
+    <script type="module">
+      import { createWatchedVideo } from '../dist/index.js';
+
+      const status = document.getElementById('status');
+      const player = createWatchedVideo({
+        src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+        videoId: 'demo-flower',
+        container: '#player',
+        attributes: { controls: true, preload: 'metadata' },
+        completionThreshold: 0.9,
+        // serverUrl: 'wss://api.example/progress', // uncomment to enable WS sync
+      });
+
+      player.on('progress', ({ snapshot }) => {
+        status.textContent =
+          `watched ${snapshot.watchedSeconds.toFixed(1)}s / ${snapshot.duration.toFixed(1)}s ` +
+          `(${(snapshot.coverage * 100).toFixed(1)}%) — last ${snapshot.lastPosition.toFixed(1)}s`;
+      });
+      player.on('resume', ({ position }) => {
+        status.textContent = `Resumed from ${position.toFixed(1)}s`;
+      });
+      player.on('complete', () => {
+        status.textContent += ' — COMPLETED';
+      });
+      player.on('seek-blocked', ({ attempted, clampedTo }) => {
+        alert(`Skipping ahead blocked (tried ${attempted.toFixed(1)}s, back to ${clampedTo.toFixed(1)}s)`);
+      });
+
+      document.getElementById('resume').onclick = () => player.skipAheadToLastWatched({ play: true });
+      document.getElementById('reset').onclick = () => player.resetProgress();
+      document.getElementById('toggle-skip').onclick = (e) => {
+        const on = !player.getFurthestWatched() || true;
+        player.setPreventSkipping(true);
+        e.target.textContent = 'Skip guard: ON (click again keeps ON — toggle in code)';
+      };
+    </script>
+  </body>
+</html>

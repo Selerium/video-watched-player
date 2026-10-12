@@ -1,0 +1,71 @@
+{
+  "name": "video-watched-player",
+  "version": "0.1.0",
+  "description": "Drop-in video element factory + watched-interval tracker with resume, completion, persistence and optional WebSocket sync.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "dist/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "video",
+    "player",
+    "watch-progress",
+    "resume",
+    "tracking"
+  ],
+  "author": "John Adithya <johnadithya008@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/selerium/video-watched-player.git"
+  },
+  "homepage": "https://github.com/selerium/video-watched-player#readme",
+  "bugs": {
+    "url": "https://github.com/selerium/video-watched-player/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8",
+    "jsdom": "^25.0.1",
+    "@types/node": "^22.7.5"
+  }
+}
